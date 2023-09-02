@@ -48,6 +48,7 @@ const qrcode = require("qrcode");
 
 
 
+app.use('/static', express.static(__dirname + '/public'));
 
 let sock;
 let qrDinamic = 'any';
@@ -431,11 +432,18 @@ app.post("/sendmessage", async (req, res) => {
 
 app.get("/", express.json(), async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
-
+  
+  
   try {
-    qrcode.toDataURL(qrDinamic || 'any', async (err, url) => {
+    qrcode.toFile('public/hola.png', qrDinamic || 'any', {
+      color: {
+        dark: '#000',  // Blue dots
+        light: '#0000' // Transparent background
+      }
+    }, async (err) => {
+      
+      console.log('url',err)
       const resInfo = JSON.stringify({
-        "url": url,
         "user": await sock?.user ? sock?.user : "sesion no iniciada"
       })
       res.json(resInfo)
