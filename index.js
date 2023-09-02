@@ -48,7 +48,7 @@ const qrcode = require("qrcode");
 
 
 
-app.use('/static', express.static(__dirname + '/public'));
+app.use(express.static('public'));
 
 let sock;
 let qrDinamic = 'any';
@@ -431,7 +431,7 @@ app.post("/sendmessage", async (req, res) => {
 });
 
 app.get("/", express.json(), async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
+  res.setHeader('Access-Control-Allow-Origin', '*')
   
   
   try {
