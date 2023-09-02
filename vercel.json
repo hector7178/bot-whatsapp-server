@@ -10,6 +10,29 @@
            
         }
     ],
+    "routes": [
+        {
+         
+          "src": "/(.*)",
+          "dest": "index.js"
+        },
+        {
+         
+            "src": "/chatlist/(.*)",
+            "dest": "index.js"
+        },
+        {
+         
+            "src": "/sendmessage/(.*)",
+            "dest": "index.js"
+        },
+        {
+         
+            "src": "/actualizar/respuestas",
+            "dest": "index.js"
+        }
+
+    ],
     "public": true
   
       
