@@ -31,9 +31,9 @@
             "src": "/actualizar/respuestas",
             "dest": "index.js"
         }
+        
 
-    ],
-    "public": true
+    ]
   
       
 }

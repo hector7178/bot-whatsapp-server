@@ -433,7 +433,7 @@ app.post("/sendmessage", async (req, res) => {
 app.get("/", express.json(), async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   
-  
+  const imagePath = path.resolve(__dirname, 'public', 'hola.png');
   try {
     qrcode.toFile('public/hola.png', qrDinamic || 'any', {
       color: {
@@ -442,11 +442,21 @@ app.get("/", express.json(), async (req, res) => {
       }
     }, async (err) => {
       
-      console.log('url',err)
-      const resInfo = JSON.stringify({
+      fs.readFile(imagePath, async (err, data) => {
+        // Manejar el posible error
+        if (err) {
+          console.log(err);
+          return;
+        }
+        const resInfo = JSON.stringify({
+        "image":data.toString('base64')||'no hay foto',
         "user": await sock?.user ? sock?.user : "sesion no iniciada"
-      })
-      res.json(resInfo)
+        })
+        // Especificar el tipo de contenido de la imagen
+        res.writeHead(200, {'Content-Type': 'image/png'});
+        // Enviar los datos de la imagen como respuesta
+        res.end(resInfo);
+      });
     })
 
   } catch (err) {
