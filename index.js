@@ -466,6 +466,18 @@ app.get("/", express.json(), async (req, res) => {
 })
 
 
+app.get('/eliminar/usuario', async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.writeHead(200, {'Content-Type': 'application/json'});
+  sock.logout();
+    fs.rm('./session_auth_info/',{recursive: true},()=>{
+    
+    return res.end('exitoso')
+    })
+ 
+
+})
+
 app.get('/chatlist', async (req, res) => {
 
   const listChat = await Chat.find({})

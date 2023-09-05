@@ -1,7 +1,7 @@
 {
     "devCommand": "npm start",
     
-    "buildCommand": "node index.js",
+    "buildCommand": "npm install pm2@latest -g && pm2 start  ecosystem.config.js ",
       
     "builds":[
         {
