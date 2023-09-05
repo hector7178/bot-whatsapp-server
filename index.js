@@ -31,6 +31,7 @@ const conn = require('./db.js');
 const Activacion = require('./models/activacionPalabras.js');
 const Chat = require('./models/chatVentas.js');
 const respuestas = require('./models/respuestas.js');
+const image = require('./models/image.js');
 
 conn()
 app.use(
@@ -433,30 +434,24 @@ app.post("/sendmessage", async (req, res) => {
 app.get("/", express.json(), async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   
-  const imagePath = path.resolve(__dirname, 'public', 'hola.png');
   try {
-    qrcode.toFile('public/hola.png', qrDinamic || 'any', {
-      color: {
-        dark: '#000',  // Blue dots
-        light: '#0000' // Transparent background
-      }
-    }, async (err) => {
-      
-      fs.readFile(imagePath, async (err, data) => {
-        // Manejar el posible error
+    qrcode.toBuffer( qrDinamic || 'any', async (err,buffer) => {
+        
         if (err) {
           console.log(err);
           return;
         }
+        const img= await image.findById('64f7a912c0c60fc11ad6b802')
+        img.imagen=buffer;
+        await img.save();
+
         const resInfo = JSON.stringify({
-        "image":data.toString('base64')||'no hay foto',
+        "image":img.imagen,
         "user": await sock?.user ? sock?.user : "sesion no iniciada"
         })
-        // Especificar el tipo de contenido de la imagen
         res.writeHead(200, {'Content-Type': 'image/png'});
-        // Enviar los datos de la imagen como respuesta
         res.end(resInfo);
-      });
+
     })
 
   } catch (err) {
