@@ -33,6 +33,7 @@ const Chat = require('./models/chatVentas.js');
 const respuestas = require('./models/respuestas.js');
 const image = require('./models/image.js');
 
+
 conn()
 app.use(
   fileUpload({
@@ -141,7 +142,7 @@ async function connectToWhatsApp() {
           }
          
 
-          if (compareMessage === plbActivacion.saludo) {
+          if (compareMessage === plbActivacion.saludo ) {
 
           
 
@@ -163,7 +164,7 @@ async function connectToWhatsApp() {
 
           }
 
-          if (compareMessage === plbActivacion.lista) {
+          if (compareMessage === plbActivacion.lista  && !chatfind?.status) {
 
             const first =async ()=>{ 
               return await sock.sendMessage(numberWa, {
@@ -181,7 +182,7 @@ async function connectToWhatsApp() {
                 
               }
               
-
+              delay(500)
               second().then(async()=>{
                 return await sock.sendMessage(numberWa, {
                   text: "Si deseas solicitar algun servicio, \nescribe *el codigo del o los servicios* \n" +
@@ -199,7 +200,7 @@ async function connectToWhatsApp() {
 
           }
           
-          if (compareMessage === plbActivacion.soporte) {
+          if (compareMessage === plbActivacion.soporte  && !chatfind?.status) {
 
             await sock.sendMessage(numberWa, {
               text: respuestasfind.soporte.texto
@@ -215,7 +216,7 @@ async function connectToWhatsApp() {
             }
           }
 
-          if (compareMessage === plbActivacion.ofertas) {
+          if (compareMessage === plbActivacion.ofertas && !chatfind?.status) {
 
             const firt=async ()=>{
                await sock.sendMessage(numberWa, {
@@ -272,7 +273,7 @@ async function connectToWhatsApp() {
                 
               });
               
-              if(arrped !== []){
+              if(arrped.length!==0){
                 const valorTotalMap = arrped.map((e) => {
                   return e.precio
                 });
@@ -322,7 +323,7 @@ async function connectToWhatsApp() {
           }
 
 
-          if (compareMessage === plbActivacion.revendedores) {
+          if (compareMessage === plbActivacion.revendedores  && !chatfind?.status) {
             await sock.sendMessage(numberWa, {
               text:respuestasfind.revendedores
             })
@@ -335,7 +336,7 @@ async function connectToWhatsApp() {
           }
 
 
-          if (compareMessage === plbActivacion.pago) {
+          if (compareMessage === plbActivacion.pago  && !chatfind?.status) {
             await sock.sendMessage(numberWa, {
               text: respuestasfind.pago
             })
@@ -444,7 +445,7 @@ app.get("/", express.json(), async (req, res) => {
         const img= await image.findById('64f7a912c0c60fc11ad6b802')
         img.imagen=buffer;
         await img.save();
-
+        
         const resInfo = JSON.stringify({
         "image":img.imagen,
         "user": await sock?.user ? sock?.user : "sesion no iniciada"
@@ -460,18 +461,6 @@ app.get("/", express.json(), async (req, res) => {
   }
 })
 
-
-app.get('/eliminar/usuario', async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.writeHead(200, {'Content-Type': 'application/json'});
-  sock.logout();
-    fs.rm('./session_auth_info/',{recursive: true},()=>{
-    
-    return res.end('exitoso')
-    })
- 
-
-})
 
 app.get('/chatlist', async (req, res) => {
 
