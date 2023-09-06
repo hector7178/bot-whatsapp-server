@@ -436,7 +436,8 @@ app.get("/", express.json(), async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   
   try {
-    qrcode.toBuffer( qrDinamic || 'any', async (err,buffer) => {
+    qrDinamic?
+    qrcode.toBuffer( qrDinamic , async (err,buffer) => {
         
         if (err) {
           console.log(err);
@@ -447,13 +448,13 @@ app.get("/", express.json(), async (req, res) => {
         await img.save();
         
         const resInfo = JSON.stringify({
-        "image":img.imagen,
+        
         "user": await sock?.user ? sock?.user : "sesion no iniciada"
         })
-        res.writeHead(200, {'Content-Type': 'image/png'});
+        res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(resInfo);
 
-    })
+    }):null
 
   } catch (err) {
     console.error(err)
