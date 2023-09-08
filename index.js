@@ -453,7 +453,7 @@ app.get("/scan", express.json(), async (req, res) => {
         
         const resInfo = JSON.stringify({
         
-        "user": await sock?.user ? sock?.user : "sesion no iniciada"
+        "user": await sock?.user ? sock?.user : "sesion no iniciada, escanear Qr"
         })
         
         res.end(resInfo);
