@@ -34,6 +34,9 @@ const respuestas = require('./models/respuestas.js');
 const image = require('./models/image.js');
 
 
+const useMongoDBAuthState = require("./session");
+const mongoURL = "mongodb+srv://hector7178:taulica123@cluster0.izqeutb.mongodb.net/?retryWrites=true&w=majority";
+const { MongoClient } = require("mongodb");
 conn()
 app.use(
   fileUpload({
@@ -60,7 +63,18 @@ let mensajes = [];
 
 
 async function connectToWhatsApp() {
-  const { state, saveCreds } = await useMultiFileAuthState("session_auth_info");
+
+  const mongoClient = new MongoClient(mongoURL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  await mongoClient.connect();
+  // const { state, saveCreds } = await useMultiFileAuthState("auth_info_baileys");
+  const collection = mongoClient
+    .db("whatsapp_api")
+    .collection("auth_info_baileys");
+  const { state, saveCreds } = await useMongoDBAuthState(collection);
+  
 
   sock = makeWASocket({
     printQRInTerminal: true,
@@ -235,7 +249,7 @@ async function connectToWhatsApp() {
                  
                }
                
- 
+               delay(500)
                second().then(async()=>{
                  return await sock.sendMessage(numberWa, {
                    text: "Si deseas solicitar alguna oferta, \nescribe *el codigo de la o las ofertas* \n" +
@@ -257,55 +271,45 @@ async function connectToWhatsApp() {
             if(compareMessage !== "salir"){
               const msj = compareMessage?.replaceAll(' ','').split(",")
               let arrped=[];
-              msj?.forEach((ped) => {
-                  const selectedoferta =  respuestasfind.ofertas.filter((res)=>{
+              msj?.forEach( (ped) => {
+                  const selectedoferta =  respuestasfind.ofertas.find((res)=>{
                     
                       return res.id === ped.toLowerCase()
                   });
-                  const selectedlista =  respuestasfind.lista.filter((res)=>{
+                  const selectedlista =  respuestasfind.lista.find((res)=>{
                     
                     return res.id=== ped.toLowerCase()
                   });
                 
 
-                  selectedlista[0]? arrped.push(selectedlista[0]):null;
-                  selectedoferta[0]? arrped.push(selectedoferta[0]):null;
+                  selectedlista? arrped.push(selectedlista):selectedoferta? arrped.push(selectedoferta):null;
+                  
                 
               });
+
               
-              if(arrped.length!==0){
+              
+              if(arrped.length > 0){
                 const valorTotalMap = arrped.map((e) => {
                   return e.precio
                 });
                 
     
                 const initialValue = 0;
-                const sumWithInitial = valorTotalMap.reduce(
-                  (accumulator, currentValue) => accumulator + currentValue,
-                  initialValue
-                );
+                const sumWithInitial = valorTotalMap.reduce((accumulator, currentValue) => accumulator + currentValue, initialValue);
                 
-                if (arrped.length >= 1) {
-
-                  const first=async ()=>{
-                    return await sock.sendMessage(numberWa, { text: "*Servicios seleccionados*: "})
-                  }
-
-                  first().then(async ()=>{
-                    const mapCount = arrped.map(async (e) => {
-                    await sock.sendMessage(numberWa, { text: e.servicio})
-                    return e
-                    }); 
-                    if (mapCount.length === arrped.length) {
-                      await sock.sendMessage(numberWa, { text: "*Total*: " + sumWithInitial + "$" })
-                      await sock.sendMessage(numberWa, { text: "Para realizar el pago correspondiente,\n escribe *b-pago* y obten la informacion de pago" })
-                    }
-                    chatfind.status=false
-                    await chatfind.save()
-                  })
-                 
+              await sock.sendMessage(numberWa, { text: "*Servicios seleccionados*: \n\n"+ arrped.map((e)=>"-> "+e.servicio).toString().replaceAll(',',"\n")});
+             
+            
+              
+              delay(1000);
+              await sock.sendMessage(numberWa, { text: "*Total*:" + sumWithInitial + "$" });
+              await sock.sendMessage(numberWa, { text: "Para realizar el pago correspondiente,\n escribe *b-pago* y obten la informacion de pago" });
+                      
+              delay(500);
+              chatfind.status=false
+              await chatfind.save()
                 
-                }
               }else{
                 await sock.sendMessage(numberWa, { text: "Por favor ingresa un valor valido \no escribe *salir* para regresar al menu de inicio" })
 
@@ -432,12 +436,12 @@ app.post("/sendmessage", async (req, res) => {
   }
 });
 
-app.get("/", express.json(), async (req, res) => {
+app.get("/scan", express.json(), async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
-  
+  res.writeHead(200, {'Content-Type': 'application/json'});
   try {
-    qrDinamic?
-    qrcode.toBuffer( qrDinamic , async (err,buffer) => {
+    
+    qrcode.toBuffer( qrDinamic || 'any' , async (err,buffer) => {
         
         if (err) {
           console.log(err);
@@ -451,10 +455,12 @@ app.get("/", express.json(), async (req, res) => {
         
         "user": await sock?.user ? sock?.user : "sesion no iniciada"
         })
-        res.writeHead(200, {'Content-Type': 'application/json'});
+        
         res.end(resInfo);
 
-    }):null
+    })
+   
+   
 
   } catch (err) {
     console.error(err)

@@ -18,6 +18,11 @@
         },
         {
          
+            "src": "/scan/(.*)",
+            "dest": "index.js"
+        },
+        {
+         
             "src": "/chatlist/(.*)",
             "dest": "index.js"
         },
