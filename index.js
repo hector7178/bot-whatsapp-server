@@ -306,7 +306,7 @@ async function connectToWhatsApp() {
               await sock.sendMessage(numberWa, { text: "*Total*:" + sumWithInitial + "$" });
               await sock.sendMessage(numberWa, { text: "Para realizar el pago correspondiente,\n escribe *b-pago* y obten la informacion de pago" });
                       
-              delay(500);
+              delay(300);
               chatfind.status=false
               await chatfind.save()
                 
