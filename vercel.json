@@ -38,7 +38,26 @@
         }
         
 
-    ]
+    ],
+    "functions": {
+        "/actualizar/respuestas": {
+          "memory": 3008,
+          "maxDuration": 30
+        },
+        "/sendmessage/(.*)": {
+          "memory": 3008,
+          "maxDuration": 30
+        },
+        "/chatlist/(.*)": {
+            "memory": 3008,
+            "maxDuration": 30
+        },
+        "/scan/(.*)": {
+            "memory": 3008,
+            "maxDuration": 30
+        }
+     
+      }
   
       
 }
