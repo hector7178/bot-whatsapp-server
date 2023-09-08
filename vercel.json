@@ -1,7 +1,7 @@
 {
     "devCommand": "npm start",
     
-    "buildCommand": "npm i pm2 -g && pm2 start node ecosystem.config.js",
+    "buildCommand": "node index.js",
       
     "builds":[
         {
