@@ -42,19 +42,19 @@
     "functions": {
         "/actualizar/respuestas": {
           "memory": 3008,
-          "maxDuration": 30
+          "maxDuration": 10
         },
         "/sendmessage/(.*)": {
           "memory": 3008,
-          "maxDuration": 30
+          "maxDuration": 10
         },
         "/chatlist/(.*)": {
             "memory": 3008,
-            "maxDuration": 30
+            "maxDuration": 10
         },
         "/scan/(.*)": {
             "memory": 3008,
-            "maxDuration": 30
+            "maxDuration": 10
         }
      
       }
