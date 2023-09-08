@@ -42,7 +42,7 @@
     "functions": {
         "/actualizar/respuestas": {
           "memory": 1024,
-          "maxDuration": 30
+          "maxDuration": 10
         },
         "/sendmessage/(.*)": {
           "memory": 1024,
@@ -54,7 +54,7 @@
         },
         "/scan/(.*)": {
             "memory": 1024,
-            "maxDuration": 60
+            "maxDuration": 10
         }
      
       }
